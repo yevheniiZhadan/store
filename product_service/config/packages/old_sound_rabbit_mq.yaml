@@ -1,0 +1,20 @@
+old_sound_rabbit_mq:
+    connections:
+        default:
+            url: '%env(RABBITMQ_URL)%'
+    producers:
+        # use 'old_sound_rabbit_mq.task_producer' service to send data.
+        product:
+            connection:       default
+            exchange_options: { name: 'product_exchange', type: direct }
+            queue_options: { name: 'product_queue' }
+        order_complete:
+           connection: default
+           exchange_options: { name: 'order_complete_exchange', type: direct }
+           queue_options: { name: 'order_complete_queue' }
+    consumers:
+        product:
+            connection:       default
+            exchange_options: { name: 'order_exchange', type: direct }
+            queue_options:    { name: 'order_queue'}
+            callback:         App\MessageHandler\OrderMessageHandler
