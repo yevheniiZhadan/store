@@ -1,7 +1,7 @@
 # store
 in root folder start with: `docker-compose up -d --build`
-run ``composer install``
-go to product_service folder and run `symfony server:start -d`
+
+go to product_service folder, run run ``composer install`` and run `symfony server:start -d`
 
 run migration command ``php bin/console doctrine:migrations:migrate``
 
