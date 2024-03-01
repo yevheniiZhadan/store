@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  product:
+    container_name: product
+    build: product_service/.
+    restart: always
+    env_file: product_service/.env
+    environment:
+      APP_NAME: product
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./product_service:/var/www/app
+
+  order:
+    container_name: order
+    build: order_service/.
+    restart: always
+    env_file: order_service/.env
+    environment:
+      APP_NAME: order
+    tty: true
+    volumes:
+      - ./order_service:/var/www/app
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+
+  db_product:
+    image: "mysql:8.0"
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: db_product
+    restart: always
+    environment:
+      MYSQL_DATABASE: "product_db"
+      MYSQL_ROOT_PASSWORD: "root_password"
+      MYSQL_USER: "product_user"
+      MYSQL_PASSWORD: "product_password"
+    ports:
+      - 3306:3306
+    volumes:
+      - product_database:/var/lib/mysql/
+
+  db_order:
+    image: "mysql:8.0"
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: db_order
+    restart: always
+    environment:
+      MYSQL_DATABASE: "order_db"
+      MYSQL_ROOT_PASSWORD: "root_password"
+      MYSQL_USER: "order_user"
+      MYSQL_PASSWORD: "order_password"
+    ports:
+      - "3307:3306"
+    volumes:
+      - order_database:/var/lib/mysql/
+volumes:
+  product_database:
+  order_database:
+  product_service:
